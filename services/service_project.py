@@ -22,3 +22,10 @@ class ProjectService :
         if any(p.name == name for p in self.projects):
             raise ValueError("This project already exists.")
         
+        projct = Project(self.ID , name , descripption)
+        self.projects.append(project)
+        self.ID += 1
+        return self.projects 
+    
+    def list_projects(self):
+        return self.projects 
