@@ -2,18 +2,16 @@ import sys
 import os
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-
-from models.task import Task
 from typing import List
+from models.task import Task
 
 
-
-class Project :
-    def init(self, project_id: int , project_name: str , descripption: str):
+class Project:
+    def __init__(self, project_id: int, name: str, description: str):
         self.id = project_id
-        self.project_name = project_name
-        self.description = descripption
-        self.tasks = list[Task] = []
+        self.name = name
+        self.description = description
+        self.tasks: List[Task] = []
 
     def add_task(self, task: Task):
         self.tasks.append(task)
@@ -25,5 +23,5 @@ class Project :
                 return True
         return False
 
-    def repr(self):
-        return f"project{self.id} : {self.project_name}"
+    def __repr__(self):
+        return f"<Project {self.id}: {self.name}>"

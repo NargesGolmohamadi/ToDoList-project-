@@ -2,52 +2,47 @@ import sys
 import os
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
+import os
 from dotenv import load_dotenv
 from models.project import Project
 
 load_dotenv()
 
-class ProjectService :
-
+class ProjectService:
     def __init__(self):
         self.projects = []
         self.ID = 1
-        self.max_projects = int(os.getenv("MAX_NUMBER_OF_PROJECTS"))
+        self.max_projects = int(os.getenv("MAX_NUMBER_OF_PROJECTS", 5))
 
-    def create_project(self, name: str , descripption: str) -> Project :
-
-        if len(name) > 30 :
+    def create_project(self, name: str, description: str) -> Project:
+        if len(name) > 30:
             raise ValueError("Project name too long.")
-        if len(descripption) > 150 :
-            raise ValueError("Project descripption too long.")
-        if len(self.prjects) > self.max_projects :
+        if len(description) > 150:
+            raise ValueError("Project description too long.")
+        if len(self.projects) >= self.max_projects:
             raise ValueError("Too many projects.")
         if any(p.name == name for p in self.projects):
             raise ValueError("This project already exists.")
         
-        projcet = Project(self.ID , name , descripption)
+        project = Project(self.ID, name, description)
         self.projects.append(project)
         self.ID += 1
         return project 
-    
+
     def list_projects(self):
         return self.projects 
 
     def get_project_by_id(self, project_id: int):
-        for p in self.projects:
-            if p.id == project_id:
-                return p
-        return None
+        return next((p for p in self.projects if p.id == project_id), None)
     
-    def edit_project(self, project_id: int, new_name: str, new_description: str) :
-
+    def edit_project(self, project_id: int, new_name: str, new_description: str):
         project = self.get_project_by_id(project_id)
         if not project:
             raise ValueError("Project not found.")
-        if len(new_name) > 30 :
+        if len(new_name) > 30:
             raise ValueError("Project name too long.")
-        if len(new_descripption) > 150 :
-            raise ValueError("Project descripption too long.")
+        if len(new_description) > 150:
+            raise ValueError("Project description too long.")
         if any(p.name == new_name and p.id != project_id for p in self.projects):
             raise ValueError("This name already exists.")
 
@@ -55,11 +50,9 @@ class ProjectService :
         project.description = new_description
         return project
 
-    def delete_project(self, project_id: int) -> bool :
-
+    def delete_project(self, project_id: int) -> bool:
         project = self.get_project_by_id(project_id)
         if not project:
             return False
         self.projects.remove(project)
         return True
-
