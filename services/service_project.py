@@ -22,10 +22,41 @@ class ProjectService :
         if any(p.name == name for p in self.projects):
             raise ValueError("This project already exists.")
         
-        projct = Project(self.ID , name , descripption)
+        projcet = Project(self.ID , name , descripption)
         self.projects.append(project)
         self.ID += 1
-        return self.projects 
+        return project 
     
     def list_projects(self):
         return self.projects 
+
+    def get_project_by_id(self, project_id: int):
+        for p in self.projects:
+            if p.id == project_id:
+                return p
+        return None
+    
+    def edit_project(self, project_id: int, new_name: str, new_description: str) :
+
+        project = self.get_project_by_id(project_id)
+        if not project:
+            raise ValueError("Project not found.")
+        if len(new_name) > 30 :
+            raise ValueError("Project name too long.")
+        if len(new_descripption) > 150 :
+            raise ValueError("Project descripption too long.")
+        if any(p.name == new_name and p.id != project_id for p in self.projects):
+            raise ValueError("This name already exists.")
+
+        project.name = new_name
+        project.description = new_description
+        return project
+
+    def delete_project(self, project_id: int) -> bool :
+
+        project = self.get_project_by_id(project_id)
+        if not project:
+            return False
+        self.projects.remove(project)
+        return True
+
