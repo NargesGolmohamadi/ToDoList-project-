@@ -2,7 +2,6 @@ import sys
 import os
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-import os
 from dotenv import load_dotenv
 from models.project import Project
 
@@ -33,7 +32,10 @@ class ProjectService:
         return self.projects 
 
     def get_project_by_id(self, project_id: int):
-        return next((p for p in self.projects if p.id == project_id), None)
+        for p in self.projects:
+            if p.id == project_id:
+                return p
+        return None
     
     def edit_project(self, project_id: int, new_name: str, new_description: str):
         project = self.get_project_by_id(project_id)

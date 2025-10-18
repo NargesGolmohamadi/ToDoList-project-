@@ -1,20 +1,18 @@
 from datetime import datetime
 
-
 class TaskStatus:
     TODO = "todo"
     DOING = "doing"
     DONE = "done"
     STATUSES = {TODO, DOING, DONE}
 
-
 class Task:
-    def __init__(self, task_id: int, name: str, description: str, status: str, deadline: str | None = None):
+    def __init__(self, task_id: int, title: str, description: str, status: str = TaskStatus.TODO, deadline: str | None = None):
         if status not in TaskStatus.STATUSES:
             raise ValueError("Invalid status")
 
         self.id = task_id
-        self.title = name
+        self.title = title
         self.description = description
         self.status = status
         self.deadline = datetime.strptime(deadline, "%Y-%m-%d") if deadline else None

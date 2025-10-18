@@ -5,7 +5,6 @@ sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from typing import List
 from models.task import Task
 
-
 class Project:
     def __init__(self, project_id: int, name: str, description: str):
         self.id = project_id
