@@ -7,15 +7,17 @@ class TaskStatus:
     STATUSES = {TODO, DOING, DONE}
 
 class Task:
-    def __init__(self, task_id: int, title: str, description: str, status: str = TaskStatus.TODO, deadline: str | None = None):
+    def __init__(self, task_id: int, title: str, description: str, deadline: str , status: str = TaskStatus.TODO):
         if status not in TaskStatus.STATUSES:
             raise ValueError("Invalid status")
+        if not deadline:
+            raise ValueError("Deadline is mandatory")
 
         self.id = task_id
         self.title = title
         self.description = description
         self.status = status
-        self.deadline = datetime.strptime(deadline, "%Y-%m-%d") if deadline else None
+        self.deadline = datetime.strptime(deadline, "%Y-%m-%d")
 
     def update_status(self, new_status: str):
         if new_status not in TaskStatus.STATUSES:

@@ -4,6 +4,7 @@ sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from services.service_project import ProjectService
 from services.service_task import TaskService
+from models.task import TaskStatus
 
 class CLIApp:
     def __init__(self):
@@ -18,7 +19,8 @@ class CLIApp:
         print("4 Show all tasks of a project")
         print("5 Edit a project")
         print("6 Delete a project")
-        print("7 Exit")
+        print("7 Change task status")  
+        print("8 Exit") 
 
     def create_project(self):
         name = input("Project name: ")
@@ -30,16 +32,18 @@ class CLIApp:
             print(f"Error: {e}")
 
     def show_projects(self):
-
         projects = self.project_service.list_projects()
         if not projects:
             print("No projects found.")
         else:
+            print("\n--- Projects ---")
             for p in projects:
                 print(f"{p.id}. {p.name} — {p.description} ({len(p.tasks)} tasks)")
 
     def add_task(self):
         self.show_projects()
+
+
         try:
             pid = int(input("Enter project ID: "))
             project = self.project_service.get_project_by_id(pid)
@@ -49,7 +53,8 @@ class CLIApp:
 
             title = input("Task title: ")
             desc = input("Task description: ")
-            task = self.task_service.add_task(project, title, desc)
+            deadline = input("Task deadline (YYYY-MM-DD): ") 
+            task = self.task_service.add_task(project, title, desc, deadline)
             print(f"Task added: {task}")
         except ValueError as e:
             print(f"Error: {e}")
@@ -65,8 +70,9 @@ class CLIApp:
             if not project.tasks:
                 print("No tasks for this project.")
             else:
+                print(f"\n--- Tasks in '{project.name}' ---")
                 for t in project.tasks:
-                    print(f"{t.id}. {t.title} — status: {t.status}")
+                    print(f"{t.id}. {t.title} — {t.status} — deadline: {t.deadline.date()}")
         except ValueError as e:
             print(f"Error: {e}")
 
@@ -92,14 +98,36 @@ class CLIApp:
         except ValueError as e:
             print(f"Error: {e}")
 
+    def change_task_status(self): 
+        self.show_tasks()
+        try:
+            pid = int(input("Enter project ID of the task: "))
+            project = self.project_service.get_project_by_id(pid)
+            if not project:
+                print("Project not found.")
+                return
+            tid = int(input("Enter task ID to change status: "))
+            task = next((t for t in project.tasks if t.id == tid), None)
+            if not task:
+                print("Task not found.")
+                return
+            print(f"Current status: {task.status}")
+            print(f"Available statuses: {', '.join(TaskStatus.STATUSES)}")
+            new_status = input("Enter new status: ")
+            task.update_status(new_status)
+            print(f"Task status updated: {task}")
+        except ValueError as e:
+            print(f"Error: {e}")
     def main(self):
         while True:
             self.print_menu()
-            choice = input("\nSelect an option: ")
-
+            choice = input("\nSelect an option: ").strip()
+            print(f"DEBUG → You entered: '{choice}'")
+            
             if choice == "1":
                 self.create_project()
             elif choice == "2":
+                print("DEBUG → calling show_projects()")  # 👈
                 self.show_projects()
             elif choice == "3":
                 self.add_task()
@@ -110,10 +138,13 @@ class CLIApp:
             elif choice == "6":
                 self.delete_project()
             elif choice == "7":
+                self.change_task_status()
+            elif choice == "8":
                 print("Goodbye!")
                 break
             else:
                 print("Not an option!")
+
 
 if __name__ == "__main__":
     app = CLIApp()

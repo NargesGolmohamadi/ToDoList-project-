@@ -4,12 +4,14 @@ sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from dotenv import load_dotenv
 from models.project import Project
+from typing import List
 
 load_dotenv()
+import json
 
 class ProjectService:
     def __init__(self):
-        self.projects = []
+        self.projects : list[Project] = []
         self.ID = 1
         self.max_projects = int(os.getenv("MAX_NUMBER_OF_PROJECTS", 5))
 
@@ -28,8 +30,8 @@ class ProjectService:
         self.ID += 1
         return project 
 
-    def list_projects(self):
-        return self.projects 
+    def list_projects(self) -> List[Project]:
+        return sorted(self.projects, key=lambda p: p.id)
 
     def get_project_by_id(self, project_id: int):
         for p in self.projects:
@@ -58,3 +60,40 @@ class ProjectService:
             return False
         self.projects.remove(project)
         return True
+    
+
+
+    def save_to_file(self, filename="data.json"):
+        data = [
+            {
+                "id": p.id,
+                "name": p.name,
+                "description": p.description,
+                "tasks": [
+                    {
+                        "id": t.id,
+                        "title": t.title,
+                        "description": t.description,
+                        "status": t.status,
+                        "deadline": t.deadline.strftime("%Y-%m-%d")
+                    }
+                    for t in p.tasks
+                ]
+            }
+            for p in self.projects
+        ]
+        with open(filename, "w") as f:
+            json.dump(data, f, indent=2)
+
+    def load_from_file(self, filename="data.json"):
+        if not os.path.exists(filename):
+            return
+        with open(filename, "r") as f:
+            data = json.load(f)
+        self.projects = []
+        for p in data:
+            project = Project(p["id"], p["name"], p["description"])
+            for t in p["tasks"]:
+                from models.task import Task
+                project.add_task(Task(**t))
+            self.projects.append(project)
