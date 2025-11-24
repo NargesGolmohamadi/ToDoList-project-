@@ -127,7 +127,7 @@ class CLIApp:
             if choice == "1":
                 self.create_project()
             elif choice == "2":
-                print("DEBUG → calling show_projects()")  # 👈
+
                 self.show_projects()
             elif choice == "3":
                 self.add_task()

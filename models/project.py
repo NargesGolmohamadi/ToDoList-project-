@@ -6,7 +6,7 @@ from typing import List
 from models.task import Task
 
 class Project:
-    def __init__(self, project_id: int, name: str, description: str):
+    def __init__(self, project_id: int, name: str, description: str): 
         self.id = project_id
         self.name = name
         self.description = description
