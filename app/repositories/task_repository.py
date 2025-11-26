@@ -1,5 +1,7 @@
 from sqlalchemy.orm import Session
+from sqlalchemy.exc import SQLAlchemyError
 from app.models.task import Task
+from app.exceptions.repository_exceptions import RepositoryError
 
 class TaskRepository:
 
@@ -9,19 +11,23 @@ class TaskRepository:
 
     def create_task(self, project_id: int, title: str, description: str, deadline: str):
     
-        new_task = Task(
-            title=title,
-            description=description,
-            status="pending",
-            deadline=deadline,
-            project_id=project_id
-        )
+        try:
+            task = Task(
+                title=title,
+                description=description,
+                status="pending",
+                deadline=deadline,
+                project_id=project_id
+            )
+            self.db.add(task)
+            self.db.commit()
+            self.db.refresh(task)
     
-        self.db.add(new_task)
-        self.db.commit()
-        self.db.refresh(new_task)
+            return task
     
-        return new_task
+        except SQLAlchemyError as e:
+            self.db.rollback()
+            raise RepositoryError(str(e))
 
     def get_task_by_id(self, task_id: int):
     
@@ -31,25 +37,27 @@ class TaskRepository:
     
         return self.db.query(Task).filter(Task.project_id == project_id).all()
 
-    def update_task_status(self, task_id: int, new_status: str):
+    def update_task_status(self, task, new_status):
     
-        task = self.get_task_by_id(task_id)
-    
-        if task:
+        try:
             task.status = new_status
             self.db.commit()
             self.db.refresh(task)
+    
             return task
     
-        return None
+        except SQLAlchemyError as e:
+            self.db.rollback()
+            raise RepositoryError(str(e))
 
-    def delete_task(self, task_id: int):
+    def delete_task(self, task):
     
-        task = self.get_task_by_id(task_id)
-    
-        if task:
+        try:
             self.db.delete(task)
             self.db.commit()
+    
             return True
     
-        return False
+        except SQLAlchemyError as e:
+            self.db.rollback()
+            raise RepositoryError(str(e))
