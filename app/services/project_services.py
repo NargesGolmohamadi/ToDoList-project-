@@ -7,6 +7,7 @@ from app.exceptions.service_exceptions import (
 )
 from app.exceptions.repository_exceptions import RepositoryError
 from dotenv import load_dotenv
+import os 
 
 load_dotenv()
 
