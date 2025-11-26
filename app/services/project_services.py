@@ -6,7 +6,9 @@ from app.exceptions.service_exceptions import (
     LimitReachedError
 )
 from app.exceptions.repository_exceptions import RepositoryError
-from app.constants import MAX_NUMBER_OF_PROJECTS
+from dotenv import load_dotenv
+
+load_dotenv()
 
 
 class ProjectService:
@@ -22,7 +24,7 @@ class ProjectService:
             raise ValidationError("Project name cannot be empty")
 
         projects = self.project_repo.get_all_projects()
-        if len(projects) >= MAX_NUMBER_OF_PROJECTS:
+        if len(projects) >= int(os.getenv("MAX_NUMBER_OF_PROJECTS", 5)):
             raise LimitReachedError("projects")
 
         try:
@@ -66,3 +68,4 @@ class ProjectService:
     
         except RepositoryError as e:
             raise e
+
