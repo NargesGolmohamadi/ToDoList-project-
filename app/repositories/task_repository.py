@@ -61,3 +61,6 @@ class TaskRepository:
         except SQLAlchemyError as e:
             self.db.rollback()
             raise RepositoryError(str(e))
+
+    def list_all(self):
+        return self.db.query(Task).all()

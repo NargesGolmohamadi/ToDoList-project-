@@ -14,7 +14,7 @@ def get_db() -> Session:
 
 
 def main_menu():
-    print("\n=== TO DO LIST (DATABASE VERSION) ===")
+    print("\n=== TO DO LIST ===")
     print("1. Create Project")
     print("2. List Projects")
     print("3. Open Project")
@@ -83,7 +83,7 @@ def run():
                     desc = input("Description: ")
                     deadline = input("Deadline (YYYY-MM-DD): ")
                     task = task_service.create_task(pid, title, desc, deadline)
-                    print("Created:", task)
+                    print("Created" )
 
                 elif ch == "2":
                 
