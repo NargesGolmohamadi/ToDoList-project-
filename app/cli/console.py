@@ -1,8 +1,13 @@
+"""import threading
+from app.commands.scheduler import start_scheduler
+"""
 import sys
 from sqlalchemy.orm import Session
 from app.db.session import SessionLocal
 from app.services.project_services import ProjectService
 from app.services.task_services import TaskService
+
+"""threading.Thread(target=start_scheduler, daemon=True).start()"""
 
 def get_db() -> Session:
     db = SessionLocal()
