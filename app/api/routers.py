@@ -1,5 +1,5 @@
 from fastapi import APIRouter
-from app.api.controllers import project_controller
+from app.api.controllers import user_controller
 
 api_router = APIRouter()
-api_router.include_router(project_controller.router, prefix="/projects")
+api_router.include_router(user_controller.router, prefix="/projects")
