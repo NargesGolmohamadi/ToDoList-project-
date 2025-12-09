@@ -1,4 +1,5 @@
 from pydantic import BaseModel
+from datetime import date
 
 class ProjectResponse(BaseModel):
     id: int
@@ -9,6 +10,10 @@ class ProjectResponse(BaseModel):
 class TaskResponse(BaseModel):
     id: int
     title: str
-    desc: str
+    description: str
+    deadline: date
     status: str
-    deadline: str
+    project_id: int
+
+    class Config:
+        orm_mode = True

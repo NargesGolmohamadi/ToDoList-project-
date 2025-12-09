@@ -1,4 +1,5 @@
 from pydantic import BaseModel
+from datetime import date
 
 class ProjectCreateRequest(BaseModel):
     name: str
@@ -13,3 +14,4 @@ class TaskCreateRequest(BaseModel):
 
 class TaskUpdateRequest(BaseModel):
     status: str
+

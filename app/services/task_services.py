@@ -23,7 +23,7 @@ class TaskService:
             raise NotFoundError("Project")
 
         try:
-            datetime.strptime(deadline, "%Y-%m-%d")
+            datetime.strptime(deadline, "%Y-%m-%d").date()
         
         except:
             raise ValidationError("Invalid deadline format. Use YYYY-MM-DD")
